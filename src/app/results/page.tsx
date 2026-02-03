@@ -3,17 +3,18 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Calculator, Download } from "lucide-react";
+import { Calculator, Download, FileText, FileSpreadsheet } from "lucide-react";
 import { useAppStore } from "@/store";
 import { AppShell } from "@/components/layout";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { WealthChart, AllocationChart } from "@/components/charts";
 import { ResultSummaryCards, FireLadder } from "@/components/fire";
+import { exportToCSV, exportToPDF } from "@/lib/export";
 
 export default function ResultsPage() {
     const router = useRouter();
-    const { isAuthenticated, simulationResult, fireTarget, runSimulation, financialInput } = useAppStore();
+    const { isAuthenticated, simulationResult, fireTarget, runSimulation, financialInput, user } = useAppStore();
     const currency = financialInput.currency || "IDR";
 
     const formatCurrency = (value: number) => {
@@ -36,6 +37,18 @@ export default function ResultsPage() {
             runSimulation();
         }
     }, [simulationResult, runSimulation]);
+
+    const handleExportCSV = () => {
+        if (simulationResult) {
+            exportToCSV(simulationResult, financialInput);
+        }
+    };
+
+    const handleExportPDF = () => {
+        if (simulationResult) {
+            exportToPDF(simulationResult, financialInput, user);
+        }
+    };
 
     if (!isAuthenticated) {
         return null;
@@ -82,7 +95,13 @@ export default function ResultsPage() {
                             Based on your current financial inputs
                         </p>
                     </div>
-                    <div className="flex gap-3">
+                    <div className="flex flex-wrap gap-2">
+                        <Button variant="ghost" size="sm" onClick={handleExportPDF}>
+                            <FileText className="w-4 h-4 mr-2" /> PDF
+                        </Button>
+                        <Button variant="ghost" size="sm" onClick={handleExportCSV}>
+                            <FileSpreadsheet className="w-4 h-4 mr-2" /> CSV
+                        </Button>
                         <Link href="/planner">
                             <Button variant="secondary" icon={<Calculator className="w-4 h-4" />}>
                                 Update Inputs
