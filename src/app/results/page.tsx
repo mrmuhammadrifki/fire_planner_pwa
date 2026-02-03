@@ -34,11 +34,23 @@ export default function ResultsPage() {
         }
     }, [isAuthenticated, router]);
 
+    // Re-run simulation whenever financial inputs or fire targets change
+    // This ensures results always reflect the latest data from planner
     useEffect(() => {
-        if (!simulationResult) {
+        if (isAuthenticated) {
             runSimulation();
         }
-    }, [simulationResult, runSimulation]);
+    }, [
+        isAuthenticated,
+        financialInput.monthlyIncome,
+        financialInput.monthlyExpenses,
+        financialInput.initialSavings,
+        fireTarget.currentAge,
+        fireTarget.targetAge,
+        fireTarget.annualReturn,
+        fireTarget.safeWithdrawalRate,
+        runSimulation,
+    ]);
 
     const handleExportCSV = () => {
         if (simulationResult) {

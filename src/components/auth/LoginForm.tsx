@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -16,6 +16,7 @@ import { useToast } from "@/components/ui/Toast";
 
 export function LoginForm() {
     const router = useRouter();
+    const searchParams = useSearchParams();
     const { setAuth, setFinancialInput, setFireTarget, setSettings } = useAppStore();
     const toast = useToast();
     const [showPassword, setShowPassword] = useState(false);
@@ -32,16 +33,33 @@ export function LoginForm() {
         const result = await login(data);
 
         if (result.success && result.data) {
+            // Set auth data
             setAuth(result.data.user, result.data.token);
 
-            // Populate store with data from backend
+            // Load financial data from MongoDB (returned by API)
+            console.log('📥 Loading data from MongoDB:', {
+                financialInput: result.data.financialInput,
+                fireTarget: result.data.fireTarget,
+            });
+
+            if (result.data.financialInput) {
+                setFinancialInput(result.data.financialInput);
+            }
+            if (result.data.fireTarget) {
+                setFireTarget(result.data.fireTarget);
+            }
+
+            // Load settings if available
             const fullUser = result.data.user as any;
-            if (fullUser.financialInput) setFinancialInput(fullUser.financialInput);
-            if (fullUser.fireTarget) setFireTarget(fullUser.fireTarget);
-            if (fullUser.settings) setSettings(fullUser.settings);
+            if (fullUser.settings) {
+                setSettings(fullUser.settings);
+            }
 
             toast.success("Welcome back!", result.message);
-            router.push("/dashboard");
+
+            // Redirect to intended page or dashboard
+            const redirectTo = searchParams.get('redirect') || '/dashboard';
+            router.push(redirectTo);
         } else {
             toast.error("Login failed", result.error);
         }

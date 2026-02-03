@@ -62,6 +62,8 @@ export async function POST(req: Request) {
             data: {
                 user: { ...userResponse, id: user._id.toString() },
                 token,
+                financialInput: user.financialInput || {},
+                fireTarget: user.fireTarget || {},
             },
             message: "Login successful",
         });

@@ -87,10 +87,30 @@ export default function SettingsPage() {
     };
 
     const handleReset = () => {
-        if (window.confirm("Are you sure you want to reset all data? This cannot be undone.")) {
+        const confirmMessage = settings.language === 'en'
+            ? "Are you sure you want to reset all data? This cannot be undone."
+            : "Apakah Anda yakin ingin mereset semua data? Ini tidak dapat dibatalkan.";
+
+        if (window.confirm(confirmMessage)) {
+            // Reset data in store
             resetAllData();
             clearAllData();
-            toast.success("Data reset", "All your financial data has been cleared.");
+
+            // Clear localStorage to remove persisted data
+            localStorage.removeItem('fire-planner-storage');
+
+            // Show success message
+            toast.success(
+                settings.language === 'en' ? "Data reset" : "Data direset",
+                settings.language === 'en'
+                    ? "All your financial data has been cleared."
+                    : "Semua data keuangan Anda telah dihapus."
+            );
+
+            // Reload page to ensure fresh state
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
         }
     };
 

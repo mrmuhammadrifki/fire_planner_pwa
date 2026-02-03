@@ -57,12 +57,16 @@ export function FinancialForm({ onSubmit }: FinancialFormProps) {
     });
 
     const handleFormSubmit = (data: PlannerFormData) => {
-        // Update store
+        console.log('📝 Form submitted with data:', data);
+
+        // Update store with new financial data
         setFinancialInput({
             monthlyIncome: data.monthlyIncome,
             monthlyExpenses: data.monthlyExpenses,
             initialSavings: data.initialSavings,
         });
+
+        // Update store with new fire target data
         setFireTarget({
             currentAge: data.currentAge,
             targetAge: data.targetAge,
@@ -71,9 +75,13 @@ export function FinancialForm({ onSubmit }: FinancialFormProps) {
             inflationRate: data.inflationRate,
         });
 
-        // Run simulation
-        runSimulation();
-        onSubmit();
+        // Run simulation with the new data
+        // Using setTimeout to ensure state updates are complete
+        setTimeout(() => {
+            console.log('🔄 Running simulation after state update...');
+            runSimulation();
+            onSubmit();
+        }, 100);
     };
 
     return (

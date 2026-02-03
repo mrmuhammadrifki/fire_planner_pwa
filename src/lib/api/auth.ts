@@ -3,7 +3,7 @@
  * Connects to MongoDB via Next.js API Routes.
  */
 
-import { UserProfile, AuthToken, ApiResponse, LoginCredentials, RegisterData } from "@/types";
+import { UserProfile, AuthToken, ApiResponse, LoginCredentials, RegisterData, FinancialInput, FireTarget } from "@/types";
 import { apiFetch, success, error } from "./client";
 
 /**
@@ -11,8 +11,18 @@ import { apiFetch, success, error } from "./client";
  */
 export async function login(
     credentials: LoginCredentials
-): Promise<ApiResponse<{ user: UserProfile; token: AuthToken }>> {
-    return apiFetch<{ user: UserProfile; token: AuthToken }>("/auth/login", {
+): Promise<ApiResponse<{
+    user: UserProfile;
+    token: AuthToken;
+    financialInput?: FinancialInput;
+    fireTarget?: FireTarget;
+}>> {
+    return apiFetch<{
+        user: UserProfile;
+        token: AuthToken;
+        financialInput?: FinancialInput;
+        fireTarget?: FireTarget;
+    }>("/auth/login", {
         method: "POST",
         body: JSON.stringify(credentials),
     });

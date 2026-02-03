@@ -105,19 +105,31 @@ export const useAppStore = create<AppState>()(
             sidebarOpen: false,
 
             // Auth actions
-            setAuth: (user, token) =>
+            setAuth: (user, token) => {
+                // Save to cookies for middleware
+                if (typeof window !== 'undefined') {
+                    document.cookie = `fire-planner-auth-token=${token.accessToken}; path=/; max-age=${7 * 24 * 60 * 60}`; // 7 days
+                }
+
                 set({
                     isAuthenticated: true,
                     user,
                     authToken: token,
-                }),
+                });
+            },
 
-            logout: () =>
+            logout: () => {
+                // Clear cookies
+                if (typeof window !== 'undefined') {
+                    document.cookie = 'fire-planner-auth-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+                }
+
                 set({
                     isAuthenticated: false,
                     user: null,
                     authToken: null,
-                }),
+                });
+            },
 
             // Financial data actions
             setFinancialInput: (input) => {
@@ -162,6 +174,18 @@ export const useAppStore = create<AppState>()(
 
             runSimulation: () => {
                 const { financialInput, fireTarget } = get();
+
+                // Debug: Log input parameters
+                console.log('🔥 Running FIRE Simulation with:', {
+                    monthlyIncome: financialInput.monthlyIncome,
+                    monthlyExpenses: financialInput.monthlyExpenses,
+                    initialSavings: financialInput.initialSavings,
+                    currentAge: fireTarget.currentAge,
+                    targetAge: fireTarget.targetAge,
+                    annualReturn: fireTarget.annualReturn,
+                    safeWithdrawalRate: fireTarget.safeWithdrawalRate,
+                });
+
                 const result = runFullSimulation({
                     monthlyIncome: financialInput.monthlyIncome,
                     monthlyExpenses: financialInput.monthlyExpenses,
@@ -171,6 +195,15 @@ export const useAppStore = create<AppState>()(
                     annualReturn: fireTarget.annualReturn,
                     safeWithdrawalRate: fireTarget.safeWithdrawalRate,
                 });
+
+                // Debug: Log result
+                console.log('📊 Simulation Result:', {
+                    yearsToFI: result.yearsToFI,
+                    fireAge: result.fireAge,
+                    fireNumber: result.fireNumber,
+                    savingRate: result.savingRate,
+                });
+
                 set({ simulationResult: result });
             },
 
@@ -248,13 +281,14 @@ export const useAppStore = create<AppState>()(
         {
             name: "fire-planner-storage",
             partialize: (state) => ({
+                // Only persist auth and UI settings
+                // Financial data should come from MongoDB, not localStorage
                 isAuthenticated: state.isAuthenticated,
                 user: state.user,
                 authToken: state.authToken,
-                financialInput: state.financialInput,
-                fireTarget: state.fireTarget,
-                simulationResult: state.simulationResult,
                 settings: state.settings,
+                // DO NOT persist: financialInput, fireTarget, simulationResult
+                // These will be loaded from MongoDB on login
             }),
         }
     )
