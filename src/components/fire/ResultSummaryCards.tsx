@@ -3,6 +3,8 @@
 import { SimulationResult } from "@/types";
 import { Card } from "@/components/ui/Card";
 import { Target, Calendar, TrendingUp, Wallet, Percent, Flame } from "lucide-react";
+import { useAppStore } from "@/store";
+import { translations } from "@/lib/i18n";
 
 interface ResultSummaryCardsProps {
     result: SimulationResult;
@@ -13,6 +15,9 @@ export function ResultSummaryCards({
     result,
     currency = "IDR",
 }: ResultSummaryCardsProps) {
+    const { settings } = useAppStore();
+    const t = translations[settings.language || "id"];
+
     const formatCurrency = (value: number) => {
         const locale = currency === "IDR" ? "id-ID" : "en-US";
 
@@ -26,45 +31,45 @@ export function ResultSummaryCards({
 
     const cards = [
         {
-            label: "Years to FI",
+            label: t.years_to_fi,
             value: result.yearsToFI === Infinity ? "∞" : result.yearsToFI.toFixed(1),
-            sublabel: result.yearsToFI === Infinity ? "Not achievable" : "years",
+            sublabel: result.yearsToFI === Infinity ? (t.not_achievable || "Not achievable") : t.years,
             icon: Calendar,
             color: "primary",
         },
         {
-            label: "FIRE Age",
+            label: t.fire_age,
             value:
                 result.yearsToFI === Infinity ? "—" : Math.round(result.fireAge).toString(),
-            sublabel: "years old",
+            sublabel: t.years_old || "years old",
             icon: Target,
             color: "fire",
         },
         {
-            label: "FIRE Number",
+            label: t.fire_number,
             value: formatCurrency(result.fireNumber),
-            sublabel: "target portfolio",
+            sublabel: t.target_portfolio || "target portfolio",
             icon: Flame,
             color: "fire",
         },
         {
-            label: "Saving Rate",
+            label: t.saving_rate,
             value: `${result.savingRate}%`,
-            sublabel: "of income saved",
+            sublabel: t.of_income_saved || "of income saved",
             icon: Percent,
             color: "wealth",
         },
         {
-            label: "Projected Value",
+            label: t.projected_value,
             value: formatCurrency(result.projectedFinalValue),
-            sublabel: "at target age",
+            sublabel: t.at_target_age,
             icon: TrendingUp,
             color: "primary",
         },
         {
-            label: "Passive Income",
+            label: t.passive_income,
             value: formatCurrency(result.monthlyPassiveIncome),
-            sublabel: "per month (current)",
+            sublabel: t.per_month_current,
             icon: Wallet,
             color: "wealth",
         },

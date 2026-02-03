@@ -6,21 +6,36 @@ import { ArrowLeft, Clock, Share2, BookOpen } from "lucide-react";
 import { AppShell } from "@/components/layout";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import { getArticleBySlug, educationArticles } from "@/data/education";
+import { getArticleBySlug, getEducationArticles } from "@/data/education";
+import { useAppStore } from "@/store";
+import { translations } from "@/lib/i18n";
 
 export default function EducationArticlePage() {
     const params = useParams();
     const slug = params.slug as string;
-    const article = getArticleBySlug(slug);
+    const { settings } = useAppStore();
+    const language = settings.language || "id";
+    const t = translations[language];
+
+    const article = getArticleBySlug(slug, language);
 
     if (!article) {
         notFound();
     }
 
     // Get related articles from same category
+    const educationArticles = getEducationArticles(language);
     const relatedArticles = educationArticles
         .filter((a) => a.category === article.category && a.id !== article.id)
         .slice(0, 2);
+
+    const categoryLabels: Record<string, string> = {
+        basics: t.cat_basics || "FIRE Basics",
+        saving: t.cat_saving || "Saving",
+        investing: t.cat_investing || "Investing",
+        "fire-strategies": t.cat_strategies || "Strategies",
+        lifestyle: t.cat_lifestyle || "Lifestyle",
+    };
 
     return (
         <AppShell>
@@ -31,7 +46,7 @@ export default function EducationArticlePage() {
                     className="inline-flex items-center gap-2 text-sm text-surface-500 dark:text-surface-400 hover:text-primary-500 mb-6"
                 >
                     <ArrowLeft className="w-4 h-4" />
-                    Back to Education
+                    {t.back_to_education || "Back to Education"}
                 </Link>
 
                 {/* Article Header */}
@@ -47,9 +62,9 @@ export default function EducationArticlePage() {
                         <div className="flex items-center justify-center gap-4 text-sm text-surface-500 dark:text-surface-400">
                             <span className="flex items-center gap-1">
                                 <Clock className="w-4 h-4" />
-                                {article.readTime} min read
+                                {article.readTime} {t.min_read || "min read"}
                             </span>
-                            <span className="capitalize">• {article.category.replace("-", " ")}</span>
+                            <span className="capitalize">• {categoryLabels[article.category] || article.category}</span>
                         </div>
                     </div>
                 </Card>
@@ -84,12 +99,12 @@ export default function EducationArticlePage() {
                 <div className="flex items-center justify-between mb-8">
                     <div className="flex items-center gap-2">
                         <Button variant="ghost" size="sm" icon={<Share2 className="w-4 h-4" />}>
-                            Share
+                            {t.share || "Share"}
                         </Button>
                     </div>
                     <Link href="/planner">
                         <Button variant="fire" size="sm">
-                            Apply What You Learned
+                            {t.apply_learned || "Apply What You Learned"}
                         </Button>
                     </Link>
                 </div>
@@ -99,7 +114,7 @@ export default function EducationArticlePage() {
                     <div className="mb-8">
                         <h3 className="text-lg font-display font-bold text-surface-900 dark:text-white mb-4 flex items-center gap-2">
                             <BookOpen className="w-5 h-5 text-primary-500" />
-                            Continue Learning
+                            {t.continue_learning || "Continue Learning"}
                         </h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {relatedArticles.map((related) => (
@@ -112,7 +127,7 @@ export default function EducationArticlePage() {
                                                     {related.title}
                                                 </h4>
                                                 <p className="text-sm text-surface-500 dark:text-surface-400 mt-1">
-                                                    {related.readTime} min read
+                                                    {related.readTime} {t.min_read || "min read"}
                                                 </p>
                                             </div>
                                         </div>

@@ -148,4 +148,28 @@ export interface Toast {
     duration?: number;
 }
 
+
+// Transaction
+export type TransactionType = "income" | "outcome";
+
+export interface Transaction {
+    _id: string;
+    userId: string;
+    type: TransactionType;
+    amount: number;
+    category: string;
+    date: string; // ISO string 
+    description?: string;
+    createdAt?: string;
+    updatedAt?: string;
+}
+
+export interface CreateTransactionData {
+    type: TransactionType;
+    amount: number;
+    category: string;
+    date: Date;
+    description?: string;
+}
+
 // Form validation schemas will be in separate file

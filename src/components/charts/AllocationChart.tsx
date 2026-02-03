@@ -9,6 +9,8 @@ import {
     ChartOptions,
 } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
+import { useAppStore } from "@/store";
+import { translations } from "@/lib/i18n";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -19,6 +21,8 @@ interface AllocationChartProps {
 }
 
 export function AllocationChart({ contributions, gains, currency = "IDR" }: AllocationChartProps) {
+    const { settings } = useAppStore();
+    const t = translations[settings.language || "id"];
     const total = contributions + gains;
 
     const formatCurrency = (value: number) => {
@@ -33,7 +37,7 @@ export function AllocationChart({ contributions, gains, currency = "IDR" }: Allo
 
     const data = useMemo(
         () => ({
-            labels: ["Contributions", "Investment Gains"],
+            labels: [t.contributions || "Contributions", t.investment_gains || "Investment Gains"],
             datasets: [
                 {
                     data: [contributions, gains],
@@ -50,7 +54,7 @@ export function AllocationChart({ contributions, gains, currency = "IDR" }: Allo
                 },
             ],
         }),
-        [contributions, gains]
+        [contributions, gains, t]
     );
 
     const options: ChartOptions<"doughnut"> = useMemo(
@@ -102,7 +106,7 @@ export function AllocationChart({ contributions, gains, currency = "IDR" }: Allo
                 <Doughnut data={data} options={options} />
                 {/* Center text */}
                 <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                    <p className="text-sm text-surface-500 dark:text-surface-400">Total</p>
+                    <p className="text-sm text-surface-500 dark:text-surface-400">{t.total || "Total"}</p>
                     <p className="text-2xl font-bold font-display text-surface-900 dark:text-white">
                         {formatCurrency(total)}
                     </p>

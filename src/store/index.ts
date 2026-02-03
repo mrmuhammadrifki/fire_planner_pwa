@@ -8,6 +8,7 @@ import {
     AppSettings,
     Toast,
     AuthToken,
+    Transaction,
 } from "@/types";
 import { runFullSimulation } from "@/lib/fire";
 
@@ -53,6 +54,12 @@ interface AppState {
     // UI actions
     setLoading: (loading: boolean) => void;
     setSidebarOpen: (open: boolean) => void;
+
+    // Transaction actions
+    transactions: Transaction[];
+    setTransactions: (transactions: Transaction[]) => void;
+    addTransactionToStore: (transaction: Transaction) => void;
+    removeTransactionFromStore: (id: string) => void;
 
     // Reset
     resetAllData: () => void;
@@ -221,12 +228,21 @@ export const useAppStore = create<AppState>()(
             setLoading: (isLoading) => set({ isLoading }),
             setSidebarOpen: (sidebarOpen) => set({ sidebarOpen }),
 
+            // Transaction actions
+            transactions: [],
+            setTransactions: (transactions) => set({ transactions }),
+            addTransactionToStore: (transaction) =>
+                set((state) => ({ transactions: [transaction, ...state.transactions] })),
+            removeTransactionFromStore: (id) =>
+                set((state) => ({ transactions: state.transactions.filter(t => t._id !== id) })),
+
             // Reset
             resetAllData: () =>
                 set({
                     financialInput: defaultFinancialInput,
                     fireTarget: defaultFireTarget,
                     simulationResult: null,
+                    transactions: [],
                 }),
         }),
         {

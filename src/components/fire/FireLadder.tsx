@@ -2,6 +2,8 @@
 
 import { FireLadderLevel } from "@/types";
 import { getFireLadderInfo, FIRE_LADDER_LEVELS } from "@/lib/fire/metrics";
+import { useAppStore } from "@/store";
+import { translations } from "@/lib/i18n";
 
 interface FireLadderProps {
     currentLevel: FireLadderLevel;
@@ -9,7 +11,28 @@ interface FireLadderProps {
 }
 
 export function FireLadder({ currentLevel, progress }: FireLadderProps) {
+    const { settings } = useAppStore();
+    const t = translations[settings.language || "id"];
     const currentLevelInfo = getFireLadderInfo(currentLevel);
+
+    const ladderNameMap: Record<string, string> = {
+        "Drowning": t.drowning_name,
+        "Surviving": t.surviving_name,
+        "CoastFI": t.coast_fi_name,
+        "LeanFI": t.lean_fi_name,
+        "BaristaFI": t.barista_fi_name,
+        "FI": t.fi_name,
+        "FatFI": t.fat_fi_name
+    };
+    const ladderDescMap: Record<string, string> = {
+        "Drowning": t.drowning_desc,
+        "Surviving": t.surviving_desc,
+        "CoastFI": t.coast_fi_desc,
+        "LeanFI": t.lean_fi_desc,
+        "BaristaFI": t.barista_fi_desc,
+        "FI": t.fi_desc,
+        "FatFI": t.fat_fi_desc
+    };
 
     return (
         <div className="space-y-6">
@@ -20,10 +43,10 @@ export function FireLadder({ currentLevel, progress }: FireLadderProps) {
                     className="text-2xl font-bold font-display"
                     style={{ color: currentLevelInfo.color }}
                 >
-                    {currentLevelInfo.name}
+                    {ladderNameMap[currentLevelInfo.level] || currentLevelInfo.name}
                 </h3>
                 <p className="text-sm text-surface-500 dark:text-surface-400 mt-2 max-w-xs mx-auto">
-                    {currentLevelInfo.description}
+                    {ladderDescMap[currentLevelInfo.level] || currentLevelInfo.description}
                 </p>
                 <div className="mt-4">
                     <span
@@ -33,7 +56,7 @@ export function FireLadder({ currentLevel, progress }: FireLadderProps) {
                             color: currentLevelInfo.color,
                         }}
                     >
-                        {Math.round(progress * 100)}% to FI
+                        {Math.round(progress * 100)}{t.percent_fi_col || "% to FI"}
                     </span>
                 </div>
             </div>
@@ -82,16 +105,16 @@ export function FireLadder({ currentLevel, progress }: FireLadderProps) {
                                 <div className="flex-1 min-w-0">
                                     <h4
                                         className={`font-semibold ${isCurrentOrPast
-                                                ? "text-surface-900 dark:text-white"
-                                                : "text-surface-500 dark:text-surface-500"
+                                            ? "text-surface-900 dark:text-white"
+                                            : "text-surface-500 dark:text-surface-500"
                                             }`}
                                     >
-                                        {level.name}
+                                        {ladderNameMap[level.level] || level.name}
                                     </h4>
                                     <p className="text-sm text-surface-500 dark:text-surface-400 truncate">
                                         {level.threshold > 0
-                                            ? `${Math.round(level.threshold * 100)}% of FI number`
-                                            : "Getting started"}
+                                            ? `${Math.round(level.threshold * 100)}${t.of_fi_number || "% of FI number"}`
+                                            : (t.getting_started || "Getting started")}
                                     </p>
                                 </div>
 
@@ -105,7 +128,7 @@ export function FireLadder({ currentLevel, progress }: FireLadderProps) {
                                                 color: level.color,
                                             }}
                                         >
-                                            Current
+                                            {t.current_status || "Current"}
                                         </span>
                                     ) : isCurrentOrPast ? (
                                         <span className="text-wealth-500 text-sm">✓</span>

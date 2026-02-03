@@ -1,6 +1,6 @@
 import { EducationArticle } from "@/types";
 
-export const educationArticles: EducationArticle[] = [
+const educationArticlesEn: EducationArticle[] = [
     {
         id: "1",
         title: "What is FIRE?",
@@ -261,7 +261,7 @@ You could cover basic survival expenses from investments. Very frugal, but techn
 **What this means:**
 Part-time work for health benefits + spending money while investments cover core expenses.
 
-**Why "Barista"?** 
+**Why "Barista"?**
 Coffee shops like Starbucks offer benefits to part-time workers.
 
 ### 🎉 Level 5: Financial Independence
@@ -501,10 +501,509 @@ FIRE isn't the goal—**freedom** is.
     },
 ];
 
-export function getArticleBySlug(slug: string): EducationArticle | undefined {
-    return educationArticles.find((article) => article.slug === slug);
+const educationArticlesId: EducationArticle[] = [
+    {
+        id: "1",
+        title: "Apa itu FIRE?",
+        slug: "what-is-fire",
+        summary: "Pelajari dasar-dasar gerakan Financial Independence, Retire Early dan bagaimana hal itu dapat mengubah hidup Anda.",
+        category: "basics",
+        readTime: 5,
+        icon: "🔥",
+        content: `
+# Apa itu FIRE?
+
+**FIRE** adalah singkatan dari **Financial Independence, Retire Early** (Kebebasan Finansial, Pensiun Dini). Ini adalah gerakan gaya hidup yang memprioritaskan tabungan dan investasi ekstrem untuk mencapai kebebasan finansial jauh lebih awal daripada usia pensiun tradisional.
+
+## Konsep Dasar
+
+Gerakan FIRE dibangun di atas premis sederhana: **jika Anda menabung secara agresif dan berinvestasi dengan bijak, Anda dapat membangun kekayaan yang cukup untuk hidup dari hasil investasi Anda tanpa batas**.
+
+### Matematika di Balik FIRE
+
+Dasar dari FIRE adalah **Aturan 4%** (juga dikenal sebagai Tingkat Penarikan Aman):
+
+- Jika Anda dapat hidup dengan mengambil 4% dari investasi Anda per tahun, uang Anda akan bertahan selamanya
+- Ini berarti Anda memerlukan **25x pengeluaran tahunan** untuk bebas secara finansial
+- Contoh: Pengeluaran Rp100.000.000/tahun × 25 = Rp2.500.000.000 diperlukan
+
+## Tipe-tipe FIRE
+
+### 🌱 Lean FIRE
+Hidup hemat dengan pengeluaran minimal. Target: 60% dari angka FIRE reguler.
+
+### ☕ Barista FIRE
+Bekerja paruh waktu untuk tunjangan sementara investasi menutupi sebagian besar biaya.
+
+### 🎉 Traditional FIRE
+Kebebasan finansial penuh dengan gaya hidup nyaman.
+
+### 👑 Fat FIRE
+Mode kelimpahan dengan penyangga ekstra untuk kemewahan.
+
+## Mengapa Gen Z Harus Peduli
+
+Memulai lebih awal adalah **kekuatan super** Anda. Inilah alasannya:
+
+1. **Bunga Majemuk**: Rp1.000.000 diinvestasikan pada usia 25 dapat tumbuh menjadi Rp21.724.000 pada usia 65 (dengan return 7%)
+2. **Fleksibilitas Waktu**: Lebih banyak tahun untuk pulih dari penurunan pasar
+3. **Pembentukan Kebiasaan**: Membangun kebiasaan uang yang baik sejak dini memberikan dividen selamanya
+4. **Pilihan**: FIRE bukan tentang tidak pernah bekerja—ini tentang memiliki pilihan
+
+## Memulai
+
+1. **Lacak pengeluaran Anda** selama satu bulan
+2. **Hitung rasio tabungan Anda** (pendapatan - pengeluaran / pendapatan)
+3. **Tentukan angka FIRE Anda** (pengeluaran tahunan × 25)
+4. **Mulai berinvestasi** di reksadana indeks biaya rendah
+5. **Tingkatkan pendapatan** sambil menjaga pengeluaran tetap stabil
+
+*Perjalanan seribu mil dimulai dengan satu langkah. Mulai hari ini!*
+    `,
+    },
+    {
+        id: "2",
+        title: "Kekuatan Rasio Tabungan",
+        slug: "power-of-saving-rate",
+        summary: "Mengapa rasio tabungan Anda lebih penting daripada gaji Anda saat mengejar FIRE.",
+        category: "saving",
+        readTime: 4,
+        icon: "💰",
+        content: `
+# Kekuatan Rasio Tabungan
+
+**Rasio tabungan** Anda adalah satu-satunya faktor terpenting dalam menentukan seberapa cepat Anda akan mencapai kebebasan finansial.
+
+## Apa itu Rasio Tabungan?
+
+> **Rasio Tabungan** = (Pendapatan - Pengeluaran) / Pendapatan × 100%
+
+Ini adalah persentase dari pendapatan Anda yang Anda simpan dan investasikan.
+
+## Mengapa Ini Lebih Penting Daripada Pendapatan
+
+Pertimbangkan dua orang:
+- **Orang A**: Berpenghasilan Rp1 Milyar, menabung Rp200 Juta (tarif 20%) → FI dalam ~37 tahun
+- **Orang B**: Berpenghasilan Rp500 Juta, menabung Rp250 Juta (tarif 50%) → FI dalam ~17 tahun
+
+Orang B mencapai FI **20 tahun lebih awal** meskipun berpenghasilan setengahnya!
+
+## Titik Manis Rasio Tabungan
+
+| Rasio Tabungan | Tahun ke FI | Gaya Hidup |
+|-------------|-------------|-----------|
+| 10% | 51 tahun | Pensiun tradisional |
+| 25% | 32 tahun | Pensiun agak dini |
+| 50% | 17 tahun | FIRE dapat dicapai |
+| 75% | 7 tahun | FIRE Agresif |
+
+*Asumsi 5% return riil dan 0% tabungan awal*
+
+## Cara Meningkatkan Rasio Tabungan
+
+### 🏠 Tempat Tinggal (Biasanya kemenangan terbesar)
+- Cari teman sekamar
+- House hack (sewakan kamar)
+- Pindah ke area dengan biaya lebih rendah
+
+### 🚗 Transportasi
+- Beli mobil bekas
+- Gunakan transportasi umum
+- Bersepeda jika memungkinkan
+
+### 🍔 Makanan
+- Siapkan makanan sendiri
+- Kurangi makan di luar
+- Belajar memasak makanan enak
+
+### 📱 Langganan
+- Audit langganan bulanan
+- Bagikan paket keluarga
+- Gunakan alternatif gratis
+
+## Rahasianya: Serang Kedua Sisi
+
+Jalur tercepat menuju FIRE menggabungkan:
+1. **Meningkatkan pendapatan** (sampingan, pertumbuhan karir, keterampilan)
+2. **Mengurangi pengeluaran** (tanpa mengorbankan kebahagiaan)
+
+Fokus pada **kemenangan besar** dulu, baru optimalkan hal-hal kecil.
+
+## Tantangan Anda
+
+Minggu ini, hitung rasio tabungan pasti Anda. Kemudian temukan SATU perubahan yang dapat meningkatkannya sebesar 5%.
+    `,
+    },
+    {
+        id: "3",
+        title: "Keajaiban Pertumbuhan Majemuk",
+        slug: "compound-growth",
+        summary: "Memahami bagaimana bunga majemuk mengubah kontribusi kecil menjadi kekayaan besar.",
+        category: "investing",
+        readTime: 4,
+        icon: "📈",
+        content: `
+# Keajaiban Pertumbuhan Majemuk
+
+Albert Einstein diduga menyebut bunga majemuk sebagai "keajaiban kedelapan dunia." Baik dia mengatakannya atau tidak, matematikanya tak terbantahkan kuat.
+
+## Apa itu Pertumbuhan Majemuk?
+
+Pertumbuhan majemuk berarti Anda mendapatkan pengembalian atas pengembalian Anda. Ini eksponensial, bukan linear.
+
+### Contoh Sederhana
+
+**Rp10.000.000 diinvestasikan dengan return tahunan 7%:**
+
+| Tahun | Nilai | Pertumbuhan Tahun Ini |
+|------|-------|------------------|
+| 0 | Rp10.000.000 | - |
+| 5 | Rp14.026.000 | Rp920.000 |
+| 10 | Rp19.672.000 | Rp1.289.000 |
+| 20 | Rp38.697.000 | Rp2.535.000 |
+| 30 | Rp76.123,000 | Rp4.988.000 |
+| 40 | Rp149.745.000 | Rp9.818.000 |
+
+Perhatikan bagaimana pertumbuhan **semakin cepat** seiring waktu!
+
+## Aturan 72
+
+Matematika mental cepat: **72 ÷ return tahunan = tahun untuk menggandakan uang**
+
+- Pada return 7%: 72 ÷ 7 = ~10 tahun untuk mengganda
+- Pada return 10%: 72 ÷ 10 = ~7 tahun untuk mengganda
+
+## Waktu adalah Aset Terbesar Anda
+
+Perbedaan memulai lebih awal:
+
+### Investor A (Mulai usia 22)
+- Investasi Rp5 Juta/bulan selama 10 tahun (usia 22-32)
+- Kemudian berhenti sepenuhnya
+- Total investasi: Rp600 Juta
+
+### Investor B (Mulai usia 32)
+- Investasi Rp5 Juta/bulan selama 33 tahun (usia 32-65)
+- Tidak pernah berhenti
+- Total investasi: Rp1,98 Milyar
+
+**Pada usia 65:**
+- Investor A: ~Rp10,3 Milyar
+- Investor B: ~Rp9,33 Milyar
+
+Investor A berinvestasi 3x lebih sedikit tetapi berakhir dengan LEBIH BANYAK! 🤯
+
+## Kekuatan Kontribusi Rutin
+
+Rp5 Juta/bulan dengan return 7%:
+- Setelah 10 tahun: Rp865 Juta
+- Setelah 20 tahun: Rp2,6 Milyar
+- Setelah 30 tahun: Rp6,1 Milyar
+- Setelah 40 tahun: Rp13,1 Milyar
+
+## Poin Penting
+
+1. **Mulai sekarang** - bahkan jumlah kecil
+2. **Konsisten** - otomasikan investasi Anda
+3. **Tetap berinvestasi** - jangan panik jual saat pasar turun
+4. **Waktu > Timing** - jangan mencoba menebak pasar
+
+*Waktu terbaik menanam pohon adalah 20 tahun lalu. Waktu terbaik kedua adalah sekarang.*
+    `,
+    },
+    {
+        id: "4",
+        title: "Memahami Tangga FIRE",
+        slug: "fire-ladder",
+        summary: "Berbagai tahapan kebebasan finansial dan cara menaiki setiap anak tangga.",
+        category: "fire-strategies",
+        readTime: 6,
+        icon: "🪜",
+        content: `
+# Memahami Tangga FIRE
+
+Kebebasan finansial bukan biner—ini adalah spektrum. Tangga FIRE membantu Anda merayakan pencapaian di sepanjang jalan.
+
+## Tingkatan Tangga FIRE
+
+### 😰 Level 0: Terlilit Utang (Drowning)
+**Status:** Kekayaan bersih negatif atau hidup dari gaji ke gaji
+
+**Fokus:**
+- Membangun dana darurat awal Rp1 Juta - Rp5 Juta
+- Lunasi hutang berbunga tinggi (kartu kredit)
+- Buat anggaran dasar
+
+### 💪 Level 1: Bertahan (Surviving)
+**Status:** Kekayaan bersih positif, dana darurat 1-2 bulan
+
+**Fokus:**
+- Membangun dana darurat 3-6 bulan
+- Maksimalkan pencocokan pemberi kerja (BPJS/DPLK)
+- Hilangkan hutang konsumtif
+
+### 🏄 Level 2: Coast FI
+**Status:** Investasi akan tumbuh menjadi FI pada pensiun tradisional (65) tanpa kontribusi lagi
+
+**Apa artinya:**
+Anda bisa berhenti berinvestasi sepenuhnya dan masih pensiun dengan normal!
+
+**Contoh:** Pada usia 25, memiliki ~Rp1 Milyar diinvestasikan (asumsi return 7%) berarti Anda Coast FI untuk pensiun Rp15 Milyar pada usia 65.
+
+### 🌱 Level 3: Lean FI
+**Status:** ~40% dari angka FI penuh
+
+**Apa artinya:**
+Anda dapat menutupi biaya hidup dasar dari investasi. Sangat hemat, tapi secara teknis bebas.
+
+### ☕ Level 4: Barista FI
+**Status:** ~60% dari angka FI penuh
+
+**Apa artinya:**
+Kerja paruh waktu untuk tunjangan/bpjs + uang saku sementara investasi menutupi biaya inti.
+
+**Kenapa "Barista"?**
+Kedai kopi seperti Starbucks di AS menawarkan tunjangan kepada pekerja paruh waktu.
+
+### 🎉 Level 5: Financial Independence
+**Status:** 100% dari angka FI (25x pengeluaran tahunan)
+
+**Apa artinya:**
+Bekerja sepenuhnya opsional. Anda telah mencapai FIRE tradisional!
+
+### 👑 Level 6: Fat FI
+**Status:** 150%+ dari angka FI
+
+**Apa artinya:**
+Penyangga ekstra untuk kemewahan, perjalanan, memberi, dan perlindungan volatilitas pasar.
+
+## Mengapa Tangga Itu Penting
+
+1. **Motivasi**: Rayakan setiap level yang dicapai
+2. **Fleksibilitas**: Anda mungkin menemukan Barista FI sudah cukup bagi Anda
+3. **Pengurangan Risiko**: Level awal memberikan jaring pengaman
+4. **Perspektif**: Menunjukkan seberapa cepat anak tangga awal terakumulasi
+
+## Hitung Level Anda Saat Ini
+
+1. Hitung pengeluaran tahunan Anda
+2. Kalikan dengan 25 untuk angka FI Anda
+3. Bagi investasi saat ini dengan angka FI
+4. Persentase itu memberitahu level Anda!
+
+**Contoh:**
+- Pengeluaran tahunan: Rp100 Juta
+- Angka FI: Rp2,5 Milyar
+- Investasi saat ini: Rp800 Juta
+- Progres: 32% → Mendekati Lean FI!
+
+*Setiap anak tangga yang dinaiki adalah kemenangan. Teruslah mendaki!*
+    `,
+    },
+    {
+        id: "5",
+        title: "Investasi 101 untuk Pemula",
+        slug: "investing-basics",
+        summary: "Strategi investasi praktis dan sederhana untuk pencari FIRE.",
+        category: "investing",
+        readTime: 5,
+        icon: "🎯",
+        content: `
+# Investasi 101 untuk Pemula
+
+Anda tidak perlu menjadi jenius keuangan untuk berinvestasi dengan sukses. Inilah pendekatan sederhana yang digunakan sebagian besar pencari FIRE.
+
+## Strategi Membosankan Yang Berhasil
+
+**Investasi Dana Indeks** - membeli reksadana yang melacak seluruh pasar.
+
+### Mengapa Dana Indeks?
+
+1. **Biaya rendah** - 0.03% vs 1%+ untuk dana aktif
+2. **Diversifikasi** - memiliki ratusan perusahaan secara instan
+3. **Kesederhanaan** - tidak perlu memilih saham
+4. **Kinerja** - mengalahkan 85% investor profesional
+
+### Dana Indeks Populer
+
+- **IDX30/LQ45**: Pasar Saham Indonesia (Top companies)
+- **S&P 500 ETF**: Top 500 perusahaan AS (jika akses offshore)
+- **Reksadana Obligasi**: Pasar Obligasi
+
+## Portofolio Tiga Dana
+
+Pendekatan klasik dan sederhana:
+
+| Dana | Alokasi | Tujuan |
+|------|------------|---------|
+| Total Market (Saham) | 60% | Mesin pertumbuhan |
+| Internasional (Opsional) | 20% | Diversifikasi |
+| Obligasi/Pasar Uang | 20% | Stabilitas |
+
+*Sesuaikan % obligasi berdasarkan toleransi risiko dan timeline*
+
+## Di Mana Harus Berinvestasi (Konteks Indonesia)
+
+### Akun Keuntungan Pajak/Karyawan
+
+1. **DPLK/JHT** - Dana Pensiun
+   - Manfaatkan jika ada match dari kantor
+
+2. **SBN (Surat Berharga Negara)**
+   - Pajak final rendah (10%)
+   - Aman dijamin negara
+
+### Reksadana & Saham (Bibit/Ajaib/dll)
+- Fleksibel, likuid
+- Pilih yang expense ratio rendah
+
+## Pola Pikir Investasi
+
+### ✅ Lakukan
+- Mulai awal (hari ini!)
+- Investasi konsisten (DCA - Dollar Cost Averaging)
+- Tetap tenang saat pasar turun
+- Jaga biaya tetap rendah
+
+### ❌ Jangan
+- Mencoba menebak pasar (timing market)
+- Cek portofolio setiap hari
+- Panik jual saat crash
+- Mengejar saham gorengan atau tren
+
+## Matematika Menunggu
+
+Mulai dengan Rp5 Juta/bulan pada return 7%:
+
+| Usia Mulai | Nilai pada 40 | Nilai pada 65 |
+|-----------|-------------|-------------|
+| 20 | Rp2,59 Milyar | Rp13,2 Milyar |
+| 25 | Rp1,73 Milyar | Rp9,15 Milyar |
+| 30 | Rp1,08 Milyar | Rp6,11 Milyar |
+
+**Setiap tahun Anda menunggu merugikan puluhan juta.**
+
+## Memulai Hari Ini
+
+1. Buka akun sekuritas/reksadana
+2. Atur auto-invest dari gaji Anda
+3. Pilih reksadana indeks atau portofolio sederhana
+4. Lupakan (serius, jangan cek setiap hari)
+
+*Strategi investasi terbaik adalah yang benar-benar bisa Anda pertahankan.*
+    `,
+    },
+    {
+        id: "6",
+        title: "Desain Gaya Hidup untuk FIRE",
+        slug: "lifestyle-design",
+        summary: "Membangun kehidupan yang memuaskan sambil mengejar kebebasan finansial.",
+        category: "lifestyle",
+        readTime: 5,
+        icon: "⚖️",
+        content: `
+# Desain Gaya Hidup untuk FIRE
+
+FIRE bukan hanya tentang tujuan—ini tentang membangun kehidupan yang tidak perlu Anda hindari.
+
+## Mitos Keseimbangan
+
+Banyak yang menganggap FIRE berarti:
+- Hemat ekstrem
+- Tidak bersenang-senang sampai pensiun
+- Mengorbankan usia 20-an dan 30-an Anda
+
+**Realitas:** Perjalanan FIRE terbaik adalah yang berkelanjutan dan menyenangkan.
+
+## Filosofi "Bangun vs Beli"
+
+### Hal yang Layak Dibelanjakan
+- Pengalaman yang menciptakan kenangan
+- Kesehatan (gym, makanan berkualitas, perawatan preventif)
+- Keterampilan yang meningkatkan pendapatan
+- Alat yang menghemat waktu signifikan
+
+### Hal yang Layak Dilewatkan
+- Simbol status (mobil mewah, barang desainer)
+- Inflasi gaya hidup saat pendapatan tumbuh
+- Langganan yang tidak digunakan
+- Pembelian kenyamanan yang tidak benar-benar Anda hargai
+
+## Menemukan "Cukup" Anda
+
+**Latihan: Aturan 10/10/10**
+
+Sebelum pembelian besar, tanyakan:
+- Bagaimana perasaan saya tentang ini dalam **10 menit**?
+- Bagaimana perasaan saya dalam **10 bulan**?
+- Bagaimana perasaan saya dalam **10 tahun**?
+
+Ini mengungkapkan apa yang benar-benar penting vs keinginan impulsif.
+
+## Riset Kebahagiaan tentang Pengeluaran
+
+Studi secara konsisten menunjukkan uang membeli kebahagiaan **sampai titik tertentu**:
+
+1. **Terpenuhinya kebutuhan dasar** mengurangi stres
+2. **Di luar itu**, pengalaman > barang
+3. **Koneksi sosial** lebih penting daripada barang
+4. **Otonomi** (apa yang diberikan FIRE) tak ternilai harganya
+
+## Desain Hari Ideal Anda
+
+*Seperti apa hari Selasa sempurna Anda jika uang bukan kendala?*
+
+Tuliskan secara detail:
+- Jam berapa Anda bangun?
+- Aktivitas apa yang mengisi hari Anda?
+- Dengan siapa Anda?
+- Di mana Anda?
+
+Sekarang kerjakan mundur: **Berapa banyak dari ini bisa Anda lakukan SEKARANG?**
+
+Seringkali, FIRE memberi Anda izin untuk melakukan apa yang sebenarnya sudah bisa Anda lakukan.
+
+## Panduan 50/30/20
+
+Kerangka penganggaran seimbang:
+
+| Kategori | Persentase | Contoh |
+|----------|------------|----------|
+| Kebutuhan | 50% | Tempat tinggal, makan, transportasi |
+| Keinginan | 30% | Hiburan, makan di luar, hobi |
+| Tabungan | 20%+ | Investasi, dana darurat |
+
+Tingkatkan persentase tabungan saat pendapatan tumbuh—jangan inflasi gaya hidup secara proporsional.
+
+## Komunitas Itu Penting
+
+FIRE bisa terasa sepi. Bangun sistem pendukung Anda:
+
+- **Online**: Komunitas FIRE di medsos, blog
+- **Lokal**: Meetup keuangan pribadi
+- **Teman**: Cari teman yang sadar uang (Anda adalah rata-rata dari 5 orang terdekat Anda)
+
+## Ingat Mengapa
+
+FIRE bukan tujuannya—**kebebasan** lah tujuannya.
+
+- Kebebasan untuk mengambil risiko
+- Kebebasan untuk berkata tidak
+- Kebebasan untuk membantu orang lain
+- Kebebasan untuk mengejar makna
+
+*Simpan "alasan" Anda di depan dan tengah pada hari-hari sulit.*
+    `,
+    },
+];
+
+export const educationArticles = educationArticlesId; // Default/Fallback export to avoid breaking other files temporarily if used directly
+
+export function getEducationArticles(language: string = 'id'): EducationArticle[] {
+    return language === 'en' ? educationArticlesEn : educationArticlesId;
 }
 
-export function getArticlesByCategory(category: string): EducationArticle[] {
-    return educationArticles.filter((article) => article.category === category);
+export function getArticleBySlug(slug: string, language: string = 'id'): EducationArticle | undefined {
+    const articles = getEducationArticles(language);
+    return articles.find((article) => article.slug === slug);
 }

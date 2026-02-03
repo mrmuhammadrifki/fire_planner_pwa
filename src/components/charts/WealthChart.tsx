@@ -15,6 +15,8 @@ import {
 } from "chart.js";
 import { Line } from "react-chartjs-2";
 import { SimulationPoint } from "@/types";
+import { useAppStore } from "@/store";
+import { translations } from "@/lib/i18n";
 
 // Register Chart.js components
 ChartJS.register(
@@ -35,6 +37,9 @@ interface WealthChartProps {
 }
 
 export function WealthChart({ points, fireNumber, currency = "IDR" }: WealthChartProps) {
+    const { settings } = useAppStore();
+    const t = translations[settings.language || "id"];
+
     const formatCurrency = (value: number) => {
         const locale = currency === "IDR" ? "id-ID" : "en-US";
 
@@ -49,10 +54,10 @@ export function WealthChart({ points, fireNumber, currency = "IDR" }: WealthChar
 
     const data = useMemo(
         () => ({
-            labels: points.map((p) => `Age ${p.age}`),
+            labels: points.map((p) => `${t.age_col || "Age"} ${p.age}`),
             datasets: [
                 {
-                    label: "Portfolio Value",
+                    label: t.portfolio_value || "Portfolio Value",
                     data: points.map((p) => p.portfolioValue),
                     borderColor: "rgb(14, 165, 233)",
                     backgroundColor: "rgba(14, 165, 233, 0.1)",
@@ -66,7 +71,7 @@ export function WealthChart({ points, fireNumber, currency = "IDR" }: WealthChar
                     pointHoverBorderWidth: 2,
                 },
                 {
-                    label: "Contributions",
+                    label: t.contributions || "Contributions",
                     data: points.map((p) => p.totalContributions),
                     borderColor: "rgb(249, 115, 22)",
                     backgroundColor: "rgba(249, 115, 22, 0.05)",
@@ -77,7 +82,7 @@ export function WealthChart({ points, fireNumber, currency = "IDR" }: WealthChar
                     pointRadius: 0,
                 },
                 {
-                    label: "FIRE Number",
+                    label: t.fire_number || "FIRE Number",
                     data: points.map(() => fireNumber),
                     borderColor: "rgb(34, 197, 94)",
                     backgroundColor: "transparent",
@@ -87,7 +92,7 @@ export function WealthChart({ points, fireNumber, currency = "IDR" }: WealthChar
                 },
             ],
         }),
-        [points, fireNumber]
+        [points, fireNumber, t]
     );
 
     const options: ChartOptions<"line"> = useMemo(

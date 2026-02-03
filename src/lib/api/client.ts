@@ -62,13 +62,15 @@ export async function apiFetch<T>(
             },
         });
 
-        const data = await response.json();
+        const responseData = await response.json();
 
+        // If the response is not OK, we still try to return the error message from the body
         if (!response.ok) {
-            return error(data.message || "An error occurred");
+            return error(responseData.error || responseData.message || "An error occurred");
         }
 
-        return success(data);
+        // Return the raw response data (which is already in ApiResponse format from our API)
+        return responseData as ApiResponse<T>;
     } catch (err) {
         return error(err instanceof Error ? err.message : "Network error");
     }

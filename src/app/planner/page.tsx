@@ -6,11 +6,13 @@ import { useAppStore } from "@/store";
 import { AppShell } from "@/components/layout";
 import { FinancialForm } from "@/components/fire";
 import { useToast } from "@/components/ui/Toast";
+import { translations } from "@/lib/i18n";
 
 export default function PlannerPage() {
     const router = useRouter();
-    const { isAuthenticated } = useAppStore();
+    const { isAuthenticated, settings } = useAppStore();
     const toast = useToast();
+    const t = translations[settings.language || "id"];
 
     useEffect(() => {
         if (!isAuthenticated) {
@@ -23,7 +25,7 @@ export default function PlannerPage() {
     }
 
     const handleSubmit = () => {
-        toast.success("Simulation complete!", "View your results on the Results page.");
+        toast.success(t.simulation_complete || "Simulation complete!", t.view_results_toast || "View your results on the Results page.");
         router.push("/results");
     };
 
@@ -32,12 +34,11 @@ export default function PlannerPage() {
             <div className="max-w-4xl mx-auto">
                 {/* Header */}
                 <div className="mb-8">
-                    <h1 className="text-2xl sm:text-3xl font-display font-bold text-surface-900 dark:text-white">
-                        FIRE Planner 🔥
+                    <h1 className="text-2xl sm:text-3xl font-display font-bold text-surface-900 dark:text-white flex items-center gap-2">
+                        {t.fire_planner_title} <span className="text-2xl">🔥</span>
                     </h1>
                     <p className="text-surface-500 dark:text-surface-400 mt-2">
-                        Enter your financial details to calculate your path to Financial Independence.
-                        All data is stored locally on your device.
+                        {t.fire_planner_subtitle}
                     </p>
                 </div>
 

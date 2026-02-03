@@ -15,15 +15,17 @@ import {
     User,
     Target,
 } from "lucide-react";
+import { translations } from "@/lib/i18n";
 
 interface FinancialFormProps {
     onSubmit: () => void;
 }
 
 export function FinancialForm({ onSubmit }: FinancialFormProps) {
-    const { financialInput, fireTarget, setFinancialInput, setFireTarget, runSimulation } =
+    const { financialInput, fireTarget, setFinancialInput, setFireTarget, runSimulation, settings } =
         useAppStore();
 
+    const t = translations[settings.language || "id"];
     const currency = financialInput.currency || "IDR";
     const isIDR = currency === "IDR";
 
@@ -79,8 +81,8 @@ export function FinancialForm({ onSubmit }: FinancialFormProps) {
             {/* Financial Inputs */}
             <Card padding="md">
                 <CardHeader
-                    title="Financial Details"
-                    subtitle={`Enter your current financial situation (${currency})`}
+                    title={t.financial_details_title}
+                    subtitle={`${t.financial_details_subtitle} (${currency})`}
                     icon={<DollarSign className="w-5 h-5" />}
                 />
 
@@ -92,7 +94,7 @@ export function FinancialForm({ onSubmit }: FinancialFormProps) {
                             <Input
                                 {...field}
                                 type="number"
-                                label="Monthly Income"
+                                label={t.monthly_income}
                                 placeholder={placeholders.income}
                                 leftIcon={CurrencyIcon}
                                 error={errors.monthlyIncome?.message}
@@ -108,7 +110,7 @@ export function FinancialForm({ onSubmit }: FinancialFormProps) {
                             <Input
                                 {...field}
                                 type="number"
-                                label="Monthly Expenses"
+                                label={t.monthly_expenses}
                                 placeholder={placeholders.expenses}
                                 leftIcon={CurrencyIcon}
                                 error={errors.monthlyExpenses?.message}
@@ -124,7 +126,7 @@ export function FinancialForm({ onSubmit }: FinancialFormProps) {
                             <Input
                                 {...field}
                                 type="number"
-                                label="Current Savings/Investments"
+                                label={t.current_savings_investments}
                                 placeholder={placeholders.savings}
                                 leftIcon={CurrencyIcon}
                                 error={errors.initialSavings?.message}
@@ -138,8 +140,8 @@ export function FinancialForm({ onSubmit }: FinancialFormProps) {
             {/* Age & Target */}
             <Card padding="md">
                 <CardHeader
-                    title="Age & Goals"
-                    subtitle="Set your retirement targets"
+                    title={t.age_and_goals_title}
+                    subtitle={t.age_and_goals_subtitle}
                     icon={<Target className="w-5 h-5" />}
                 />
 
@@ -151,7 +153,7 @@ export function FinancialForm({ onSubmit }: FinancialFormProps) {
                             <Input
                                 {...field}
                                 type="number"
-                                label="Current Age"
+                                label={t.current_age_placeholder}
                                 placeholder="25"
                                 leftIcon={<User className="w-4 h-4" />}
                                 error={errors.currentAge?.message}
@@ -167,7 +169,7 @@ export function FinancialForm({ onSubmit }: FinancialFormProps) {
                             <Input
                                 {...field}
                                 type="number"
-                                label="Target Retirement Age"
+                                label={t.target_retire_age_placeholder}
                                 placeholder="55"
                                 leftIcon={<Target className="w-4 h-4" />}
                                 error={errors.targetAge?.message}
@@ -181,8 +183,8 @@ export function FinancialForm({ onSubmit }: FinancialFormProps) {
             {/* Assumptions */}
             <Card padding="md">
                 <CardHeader
-                    title="Investment Assumptions"
-                    subtitle="Customize your projections"
+                    title={t.investment_assumptions_title}
+                    subtitle={t.investment_assumptions_subtitle}
                     icon={<TrendingUp className="w-5 h-5" />}
                 />
 
@@ -195,7 +197,7 @@ export function FinancialForm({ onSubmit }: FinancialFormProps) {
                                 {...field}
                                 type="number"
                                 step="0.1"
-                                label="Annual Return (%)"
+                                label={t.annual_return}
                                 placeholder="7"
                                 leftIcon={<TrendingUp className="w-4 h-4" />}
                                 rightIcon={<Percent className="w-4 h-4" />}
@@ -214,7 +216,7 @@ export function FinancialForm({ onSubmit }: FinancialFormProps) {
                                 {...field}
                                 type="number"
                                 step="0.1"
-                                label="Safe Withdrawal Rate (%)"
+                                label={t.safe_withdrawal_rate}
                                 placeholder="4"
                                 leftIcon={<Percent className="w-4 h-4" />}
                                 error={errors.safeWithdrawalRate?.message}
@@ -232,7 +234,7 @@ export function FinancialForm({ onSubmit }: FinancialFormProps) {
                                 {...field}
                                 type="number"
                                 step="0.1"
-                                label="Inflation Rate (%)"
+                                label={t.inflation_rate}
                                 placeholder="3"
                                 leftIcon={<Percent className="w-4 h-4" />}
                                 error={errors.inflationRate?.message}
@@ -253,7 +255,7 @@ export function FinancialForm({ onSubmit }: FinancialFormProps) {
                     isLoading={isSubmitting}
                     icon={<Calculator className="w-5 h-5" />}
                 >
-                    Calculate My FIRE Journey
+                    {t.run_simulation}
                 </Button>
             </div>
         </form>

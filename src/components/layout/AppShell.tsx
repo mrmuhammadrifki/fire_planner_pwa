@@ -8,6 +8,7 @@ import {
     LayoutDashboard,
     Calculator,
     TrendingUp,
+    TrendingDown,
     BookOpen,
     Settings,
     Menu,
@@ -16,6 +17,10 @@ import {
     Sun,
     Moon,
     Download,
+    Wallet,
+    ChevronDown,
+    ChevronRight,
+    FileText
 } from "lucide-react";
 import { useAppStore } from "@/store";
 import { Button } from "@/components/ui/Button";
@@ -31,8 +36,28 @@ export function AppShell({ children }: AppShellProps) {
     const { user, logout, settings, setTheme } = useAppStore();
     const t = translations[settings.language || "id"];
 
+    const [expandedMenus, setExpandedMenus] = useState<string[]>([]); // Default closed
+
+    const toggleMenu = (label: string) => {
+        setExpandedMenus((prev) =>
+            prev.includes(label)
+                ? prev.filter((item) => item !== label)
+                : [...prev, label]
+        );
+    };
+
     const navItems = [
         { href: "/dashboard", label: t.nav_dashboard, icon: LayoutDashboard },
+        {
+            label: t.nav_transactions,
+            icon: Wallet,
+            href: "#",
+            children: [
+                { href: "/transaction/income", label: t.nav_income, icon: TrendingUp },
+                { href: "/transaction/outcome", label: t.nav_outcome, icon: TrendingDown },
+                { href: "/transaction/report", label: t.nav_report, icon: FileText },
+            ],
+        },
         { href: "/planner", label: t.nav_planner, icon: Calculator },
         { href: "/results", label: t.nav_results, icon: TrendingUp },
         { href: "/education", label: t.nav_learn, icon: BookOpen },
@@ -96,24 +121,76 @@ export function AppShell({ children }: AppShellProps) {
                     {/* Navigation */}
                     <nav className="flex-1 p-4 space-y-1 overflow-y-auto custom-scrollbar">
                         {navItems.map((item) => {
-                            const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
+                            const isExpanded = expandedMenus.includes(item.label);
+                            const hasChildren = item.children && item.children.length > 0;
+                            const isActive = !hasChildren && (pathname === item.href || pathname.startsWith(`${item.href}/`));
+
                             return (
-                                <Link
-                                    key={item.href}
-                                    href={item.href}
-                                    onClick={() => setSidebarOpen(false)}
-                                    className={`
-                    flex items-center gap-3 px-4 py-3 rounded-xl font-medium
-                    transition-all duration-200
-                    ${isActive
-                                            ? "bg-gradient-to-r from-primary-500/10 to-primary-500/5 text-primary-600 dark:text-primary-400"
-                                            : "text-surface-600 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-surface-800"
-                                        }
-                  `}
-                                >
-                                    <item.icon className={`w-5 h-5 ${isActive ? "text-primary-500" : ""}`} />
-                                    {item.label}
-                                </Link>
+                                <div key={item.label}>
+                                    {hasChildren ? (
+                                        <button
+                                            onClick={() => toggleMenu(item.label)}
+                                            className={`
+                                                w-full flex items-center justify-between px-4 py-3 rounded-xl font-medium
+                                                transition-all duration-200 text-surface-600 dark:text-surface-300 
+                                                hover:bg-surface-100 dark:hover:bg-surface-800
+                                            `}
+                                        >
+                                            <div className="flex items-center gap-3">
+                                                <item.icon className="w-5 h-5" />
+                                                {item.label}
+                                            </div>
+                                            {isExpanded ? (
+                                                <ChevronDown className="w-4 h-4 opacity-50" />
+                                            ) : (
+                                                <ChevronRight className="w-4 h-4 opacity-50" />
+                                            )}
+                                        </button>
+                                    ) : (
+                                        <Link
+                                            href={item.href}
+                                            onClick={() => setSidebarOpen(false)}
+                                            className={`
+                                                flex items-center gap-3 px-4 py-3 rounded-xl font-medium
+                                                transition-all duration-200
+                                                ${isActive
+                                                    ? "bg-gradient-to-r from-primary-500/10 to-primary-500/5 text-primary-600 dark:text-primary-400"
+                                                    : "text-surface-600 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-surface-800"
+                                                }
+                                            `}
+                                        >
+                                            <item.icon className={`w-5 h-5 ${isActive ? "text-primary-500" : ""}`} />
+                                            {item.label}
+                                        </Link>
+                                    )}
+
+                                    {/* Submenu */}
+                                    {hasChildren && isExpanded && (
+                                        <div className="mt-1 ml-4 space-y-1 pl-4 border-l border-surface-200 dark:border-surface-700">
+                                            {item.children.map((child) => {
+                                                const isChildActive = pathname === child.href;
+                                                return (
+                                                    <Link
+                                                        key={child.href}
+                                                        href={child.href}
+                                                        onClick={() => setSidebarOpen(false)}
+                                                        className={`
+                                                            flex items-center gap-3 px-4 py-2.5 rounded-xl font-medium text-sm
+                                                            transition-all duration-200
+                                                            ${isChildActive
+                                                                ? "text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/10"
+                                                                : "text-surface-500 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-200"
+                                                            }
+                                                        `}
+                                                    >
+                                                        <child.icon className={`w-4 h-4 ${isChildActive ? "text-primary-500" : ""}`} />
+                                                        {child.label}
+                                                    </Link>
+                                                );
+                                            })}
+                                        </div>
+                                    )}
+                                </div>
                             );
                         })}
                     </nav>

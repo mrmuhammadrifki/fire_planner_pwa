@@ -11,11 +11,13 @@ import { Button } from "@/components/ui/Button";
 import { WealthChart, AllocationChart } from "@/components/charts";
 import { ResultSummaryCards, FireLadder } from "@/components/fire";
 import { exportToCSV, exportToPDF } from "@/lib/export";
+import { translations } from "@/lib/i18n";
 
 export default function ResultsPage() {
     const router = useRouter();
-    const { isAuthenticated, simulationResult, fireTarget, runSimulation, financialInput, user } = useAppStore();
+    const { isAuthenticated, simulationResult, fireTarget, runSimulation, financialInput, user, settings } = useAppStore();
     const currency = financialInput.currency || "IDR";
+    const t = translations[settings.language || "id"];
 
     const formatCurrency = (value: number) => {
         const locale = currency === "IDR" ? "id-ID" : "en-US";
@@ -60,14 +62,14 @@ export default function ResultsPage() {
                 <div className="max-w-4xl mx-auto text-center py-20">
                     <div className="text-6xl mb-4">📊</div>
                     <h2 className="text-2xl font-display font-bold text-surface-900 dark:text-white mb-4">
-                        No Simulation Results Yet
+                        {t.no_simulation || "No Simulation Results Yet"}
                     </h2>
                     <p className="text-surface-500 dark:text-surface-400 mb-8">
-                        Run a simulation in the Planner to see your FIRE projections.
+                        {t.run_simulation_desc}
                     </p>
                     <Link href="/planner">
                         <Button variant="fire" icon={<Calculator className="w-5 h-5" />}>
-                            Go to Planner
+                            {t.update_plan}
                         </Button>
                     </Link>
                 </div>
@@ -89,10 +91,10 @@ export default function ResultsPage() {
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
                         <h1 className="text-2xl sm:text-3xl font-display font-bold text-surface-900 dark:text-white">
-                            Your FIRE Journey 📈
+                            {t.your_fire_journey} 📈
                         </h1>
                         <p className="text-surface-500 dark:text-surface-400 mt-1">
-                            Based on your current financial inputs
+                            {t.fire_journey_subtitle}
                         </p>
                     </div>
                     <div className="flex flex-wrap gap-2">
@@ -104,7 +106,7 @@ export default function ResultsPage() {
                         </Button>
                         <Link href="/planner">
                             <Button variant="secondary" icon={<Calculator className="w-4 h-4" />}>
-                                Update Inputs
+                                {t.update_plan}
                             </Button>
                         </Link>
                     </div>
@@ -119,10 +121,10 @@ export default function ResultsPage() {
                     <Card padding="md" className="lg:col-span-2">
                         <div className="mb-4">
                             <h3 className="text-lg font-semibold text-surface-900 dark:text-white">
-                                Wealth Projection
+                                {t.wealth_projection}
                             </h3>
                             <p className="text-sm text-surface-500 dark:text-surface-400">
-                                Portfolio growth over time to age {fireTarget.targetAge}
+                                {t.wealth_projection_subtitle} {fireTarget.targetAge}
                             </p>
                         </div>
                         <WealthChart
@@ -136,10 +138,10 @@ export default function ResultsPage() {
                     <Card padding="md">
                         <div className="mb-4">
                             <h3 className="text-lg font-semibold text-surface-900 dark:text-white">
-                                Final Breakdown
+                                {t.final_breakdown}
                             </h3>
                             <p className="text-sm text-surface-500 dark:text-surface-400">
-                                Contributions vs. investment gains
+                                {t.final_breakdown_subtitle}
                             </p>
                         </div>
                         <AllocationChart
@@ -154,10 +156,10 @@ export default function ResultsPage() {
                 <Card padding="lg">
                     <div className="mb-6">
                         <h3 className="text-xl font-display font-bold text-surface-900 dark:text-white">
-                            Your FIRE Ladder Progress
+                            {t.fire_ladder_progress}
                         </h3>
                         <p className="text-surface-500 dark:text-surface-400 mt-1">
-                            Track your journey through the stages of financial independence
+                            {t.fire_ladder_subtitle}
                         </p>
                     </div>
                     <FireLadder currentLevel={simulationResult.fireLadderLevel} progress={progress} />
@@ -166,27 +168,19 @@ export default function ResultsPage() {
                 {/* Insights Card */}
                 <Card variant="gradient" padding="lg">
                     <h3 className="text-lg font-semibold text-surface-900 dark:text-white mb-4">
-                        💡 Key Insights
+                        💡 {t.key_insights}
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="p-4 rounded-xl bg-white/50 dark:bg-surface-800/50">
                             <p className="text-sm text-surface-600 dark:text-surface-300">
-                                <strong className="text-surface-900 dark:text-white">Time matters:</strong>{" "}
-                                Starting 5 years earlier could mean arriving at FI with{" "}
-                                <span className="text-wealth-600 dark:text-wealth-400 font-semibold">
-                                    40% more wealth
-                                </span>{" "}
-                                due to compound growth.
+                                <strong className="text-surface-900 dark:text-white">{t.time_matters_title}</strong>{" "}
+                                {t.time_matters_desc}
                             </p>
                         </div>
                         <div className="p-4 rounded-xl bg-white/50 dark:bg-surface-800/50">
                             <p className="text-sm text-surface-600 dark:text-surface-300">
-                                <strong className="text-surface-900 dark:text-white">Saving rate power:</strong>{" "}
-                                Increasing your saving rate from {simulationResult.savingRate}% to{" "}
-                                {Math.min(simulationResult.savingRate + 10, 80)}% could shave{" "}
-                                <span className="text-fire-600 dark:text-fire-400 font-semibold">
-                                    years off your timeline
-                                </span>.
+                                <strong className="text-surface-900 dark:text-white">{t.saving_power_title}</strong>{" "}
+                                {t.saving_power_desc}
                             </p>
                         </div>
                     </div>
@@ -197,10 +191,10 @@ export default function ResultsPage() {
                     <div className="mb-4 flex items-center justify-between">
                         <div>
                             <h3 className="text-lg font-semibold text-surface-900 dark:text-white">
-                                Year-by-Year Projection
+                                {t.year_by_year}
                             </h3>
                             <p className="text-sm text-surface-500 dark:text-surface-400">
-                                Detailed breakdown of your portfolio growth
+                                {t.year_by_year_desc}
                             </p>
                         </div>
                     </div>
@@ -209,19 +203,19 @@ export default function ResultsPage() {
                             <thead>
                                 <tr className="border-b border-surface-200 dark:border-surface-700">
                                     <th className="text-left py-3 px-4 font-medium text-surface-500 dark:text-surface-400">
-                                        Age
+                                        {t.age_col}
                                     </th>
                                     <th className="text-right py-3 px-4 font-medium text-surface-500 dark:text-surface-400">
-                                        Portfolio Value
+                                        {t.portfolio_col}
                                     </th>
                                     <th className="text-right py-3 px-4 font-medium text-surface-500 dark:text-surface-400">
-                                        Contributions
+                                        {t.contribution_col}
                                     </th>
                                     <th className="text-right py-3 px-4 font-medium text-surface-500 dark:text-surface-400">
-                                        Gains
+                                        {t.gains_col}
                                     </th>
                                     <th className="text-center py-3 px-4 font-medium text-surface-500 dark:text-surface-400">
-                                        % to FI
+                                        {t.percent_fi_col}
                                     </th>
                                 </tr>
                             </thead>

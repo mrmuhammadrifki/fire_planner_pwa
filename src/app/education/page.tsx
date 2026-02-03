@@ -4,17 +4,24 @@ import Link from "next/link";
 import { Clock, ArrowRight, BookOpen, Flame } from "lucide-react";
 import { AppShell } from "@/components/layout";
 import { Card } from "@/components/ui/Card";
-import { educationArticles } from "@/data/education";
-
-const categoryLabels: Record<string, { label: string; color: string }> = {
-    basics: { label: "FIRE Basics", color: "bg-primary-100 dark:bg-primary-900/50 text-primary-700 dark:text-primary-300" },
-    saving: { label: "Saving", color: "bg-wealth-100 dark:bg-wealth-900/50 text-wealth-700 dark:text-wealth-300" },
-    investing: { label: "Investing", color: "bg-fire-100 dark:bg-fire-900/50 text-fire-700 dark:text-fire-300" },
-    "fire-strategies": { label: "Strategies", color: "bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300" },
-    lifestyle: { label: "Lifestyle", color: "bg-cyan-100 dark:bg-cyan-900/50 text-cyan-700 dark:text-cyan-300" },
-};
+import { getEducationArticles } from "@/data/education";
+import { useAppStore } from "@/store";
+import { translations } from "@/lib/i18n";
 
 export default function EducationPage() {
+    const { settings } = useAppStore();
+    const language = settings.language || "id";
+    const t = translations[language];
+    const educationArticles = getEducationArticles(language);
+
+    const categoryLabels: Record<string, { label: string; color: string }> = {
+        basics: { label: t.cat_basics || "FIRE Basics", color: "bg-primary-100 dark:bg-primary-900/50 text-primary-700 dark:text-primary-300" },
+        saving: { label: t.cat_saving || "Saving", color: "bg-wealth-100 dark:bg-wealth-900/50 text-wealth-700 dark:text-wealth-300" },
+        investing: { label: t.cat_investing || "Investing", color: "bg-fire-100 dark:bg-fire-900/50 text-fire-700 dark:text-fire-300" },
+        "fire-strategies": { label: t.cat_strategies || "Strategies", color: "bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300" },
+        lifestyle: { label: t.cat_lifestyle || "Lifestyle", color: "bg-cyan-100 dark:bg-cyan-900/50 text-cyan-700 dark:text-cyan-300" },
+    };
+
     return (
         <AppShell>
             <div className="max-w-7xl mx-auto">
@@ -25,11 +32,11 @@ export default function EducationPage() {
                             <BookOpen className="w-6 h-6" />
                         </div>
                         <h1 className="text-2xl sm:text-3xl font-display font-bold text-surface-900 dark:text-white">
-                            Learn FIRE
+                            {t.learn_fire_title || "Learn FIRE"}
                         </h1>
                     </div>
                     <p className="text-surface-500 dark:text-surface-400">
-                        Master the principles of Financial Independence with our curated guides
+                        {t.learn_fire_page_subtitle || "Master the principles of Financial Independence with our curated guides"}
                     </p>
                 </div>
 
@@ -40,7 +47,7 @@ export default function EducationPage() {
                             <div className="text-6xl">{educationArticles[0].icon}</div>
                             <div className="flex-1">
                                 <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium mb-3 ${categoryLabels[educationArticles[0].category].color}`}>
-                                    Featured • {categoryLabels[educationArticles[0].category].label}
+                                    {t.featured || "Featured"} • {categoryLabels[educationArticles[0].category].label}
                                 </span>
                                 <h2 className="text-xl sm:text-2xl font-display font-bold text-surface-900 dark:text-white mb-2">
                                     {educationArticles[0].title}
@@ -51,10 +58,10 @@ export default function EducationPage() {
                                 <div className="flex items-center gap-4 text-sm text-surface-500 dark:text-surface-400">
                                     <span className="flex items-center gap-1">
                                         <Clock className="w-4 h-4" />
-                                        {educationArticles[0].readTime} min read
+                                        {educationArticles[0].readTime} {t.min_read || "min read"}
                                     </span>
                                     <span className="flex items-center gap-1 text-primary-500">
-                                        Start reading
+                                        {t.start_reading || "Start reading"}
                                         <ArrowRight className="w-4 h-4" />
                                     </span>
                                 </div>
@@ -69,7 +76,7 @@ export default function EducationPage() {
                 {/* Category filters */}
                 <div className="flex flex-wrap gap-2 mb-6">
                     <span className="px-4 py-2 rounded-full bg-surface-900 dark:bg-white text-white dark:text-surface-900 text-sm font-medium">
-                        All Topics
+                        {t.all_topics || "All Topics"}
                     </span>
                     {Object.entries(categoryLabels).map(([key, { label, color }]) => (
                         <span
@@ -100,7 +107,7 @@ export default function EducationPage() {
                                         </p>
                                         <div className="flex items-center gap-2 mt-3 text-xs text-surface-400 dark:text-surface-500">
                                             <Clock className="w-3 h-3" />
-                                            {article.readTime} min read
+                                            {article.readTime} {t.min_read || "min read"}
                                         </div>
                                     </div>
                                 </div>
@@ -113,15 +120,15 @@ export default function EducationPage() {
                 <Card variant="glass" padding="lg" className="mt-8 text-center">
                     <div className="text-4xl mb-4">🚀</div>
                     <h3 className="text-xl font-display font-bold text-surface-900 dark:text-white mb-2">
-                        Ready to apply what you&apos;ve learned?
+                        {t.ready_to_apply || "Ready to apply what you've learned?"}
                     </h3>
                     <p className="text-surface-500 dark:text-surface-400 mb-4">
-                        Use our FIRE calculator to create your personalized financial independence plan.
+                        {t.use_calculator_desc || "Use our FIRE calculator to create your personalized financial independence plan."}
                     </p>
                     <Link href="/planner">
                         <button className="btn-fire inline-flex items-center gap-2">
                             <Flame className="w-4 h-4" />
-                            Start Planning
+                            {t.start_planning || "Start Planning"}
                         </button>
                     </Link>
                 </Card>
