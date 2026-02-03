@@ -41,7 +41,7 @@ export function error<T>(errorMessage: string): ApiResponse<T> {
  * Replace this with your actual API base URL when integrating with a backend
  */
 export const API_CONFIG = {
-    baseUrl: process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api",
+    baseUrl: "/api",
     timeout: 10000,
 };
 

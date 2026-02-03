@@ -16,7 +16,7 @@ import { useToast } from "@/components/ui/Toast";
 
 export function LoginForm() {
     const router = useRouter();
-    const { setAuth } = useAppStore();
+    const { setAuth, setFinancialInput, setFireTarget, setSettings } = useAppStore();
     const toast = useToast();
     const [showPassword, setShowPassword] = useState(false);
 
@@ -33,6 +33,13 @@ export function LoginForm() {
 
         if (result.success && result.data) {
             setAuth(result.data.user, result.data.token);
+
+            // Populate store with data from backend
+            const fullUser = result.data.user as any;
+            if (fullUser.financialInput) setFinancialInput(fullUser.financialInput);
+            if (fullUser.fireTarget) setFireTarget(fullUser.fireTarget);
+            if (fullUser.settings) setSettings(fullUser.settings);
+
             toast.success("Welcome back!", result.message);
             router.push("/dashboard");
         } else {

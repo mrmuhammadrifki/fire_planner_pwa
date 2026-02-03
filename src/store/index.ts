@@ -113,15 +113,45 @@ export const useAppStore = create<AppState>()(
                 }),
 
             // Financial data actions
-            setFinancialInput: (input) =>
-                set((state) => ({
-                    financialInput: { ...state.financialInput, ...input },
-                })),
+            setFinancialInput: (input) => {
+                set((state) => {
+                    const newState = {
+                        financialInput: { ...state.financialInput, ...input },
+                    };
 
-            setFireTarget: (target) =>
-                set((state) => ({
-                    fireTarget: { ...state.fireTarget, ...target },
-                })),
+                    // Sync with backend if authenticated
+                    const { isAuthenticated, authToken } = state;
+                    if (isAuthenticated && authToken) {
+                        import("@/lib/api/user").then(({ updateFinancialData }) => {
+                            updateFinancialData(authToken.accessToken, {
+                                financialInput: newState.financialInput
+                            }).catch(console.error);
+                        });
+                    }
+
+                    return newState;
+                });
+            },
+
+            setFireTarget: (target) => {
+                set((state) => {
+                    const newState = {
+                        fireTarget: { ...state.fireTarget, ...target },
+                    };
+
+                    // Sync with backend if authenticated
+                    const { isAuthenticated, authToken } = state;
+                    if (isAuthenticated && authToken) {
+                        import("@/lib/api/user").then(({ updateFinancialData }) => {
+                            updateFinancialData(authToken.accessToken, {
+                                fireTarget: newState.fireTarget
+                            }).catch(console.error);
+                        });
+                    }
+
+                    return newState;
+                });
+            },
 
             runSimulation: () => {
                 const { financialInput, fireTarget } = get();
@@ -141,25 +171,40 @@ export const useAppStore = create<AppState>()(
 
             // Settings actions
             setSettings: (newSettings) =>
-                set((state) => ({
-                    settings: { ...state.settings, ...newSettings },
-                })),
+                set((state) => {
+                    const newState = {
+                        settings: { ...state.settings, ...newSettings },
+                    };
 
-            setTheme: (theme) =>
-                set((state) => ({
-                    settings: { ...state.settings, theme },
-                })),
+                    // Sync with backend if authenticated
+                    const { isAuthenticated, authToken } = state;
+                    if (isAuthenticated && authToken) {
+                        import("@/lib/api/user").then(({ updateUserProfile }) => {
+                            updateUserProfile(authToken.accessToken, {
+                                settings: newState.settings
+                            }).catch(console.error);
+                        });
+                    }
 
-            setCurrency: (currency) =>
-                set((state) => ({
-                    settings: { ...state.settings, currency, locale: currency === "IDR" ? "id-ID" : "en-US" },
-                    financialInput: { ...state.financialInput, currency },
-                })),
+                    return newState;
+                }),
 
-            setLanguage: (language) =>
-                set((state) => ({
-                    settings: { ...state.settings, language },
-                })),
+            setTheme: (theme) => {
+                get().setSettings({ theme });
+            },
+
+            setCurrency: (currency) => {
+                const { setSettings, setFinancialInput } = get();
+                setSettings({
+                    currency,
+                    locale: currency === "IDR" ? "id-ID" : "en-US"
+                });
+                setFinancialInput({ currency });
+            },
+
+            setLanguage: (language) => {
+                get().setSettings({ language });
+            },
 
             // Toast actions
             addToast: (toast) =>
