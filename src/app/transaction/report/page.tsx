@@ -17,7 +17,7 @@ import {
 import { AppShell } from "@/components/layout";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import { FileText, Download, TrendingUp, TrendingDown, Wallet } from "lucide-react";
+import { FileText, Download, TrendingUp, TrendingDown, Wallet, Calendar, X } from "lucide-react";
 import { useAppStore } from "@/store";
 import { fetchTransactions } from "@/lib/api/transaction";
 import { jsPDF } from "jspdf";
@@ -25,10 +25,18 @@ import autoTable from "jspdf-autotable";
 
 import { translations } from "@/lib/i18n";
 
+type FilterType = 'all' | 'month' | 'custom';
+
 export default function FinancialReportPage() {
     const { authToken, transactions, setTransactions, financialInput, settings } = useAppStore();
     const [loading, setLoading] = useState(false);
     const currency = financialInput.currency || "IDR";
+
+    // Filter states
+    const [filterType, setFilterType] = useState<FilterType>('all');
+    const [selectedMonth, setSelectedMonth] = useState<string>('');
+    const [dateFrom, setDateFrom] = useState<string>('');
+    const [dateTo, setDateTo] = useState<string>('');
 
     // Get translations
     const language = settings?.language || 'id';
@@ -56,13 +64,60 @@ export default function FinancialReportPage() {
         }
     }, [authToken]);
 
+    // Generate month options from transactions
+    const monthOptions = useMemo(() => {
+        const months = new Set<string>();
+        transactions.forEach(t => {
+            const date = new Date(t.date);
+            const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+            months.add(monthKey);
+        });
+        return Array.from(months).sort().reverse();
+    }, [transactions]);
+
+    // Filter transactions based on selected filter
+    const filteredTransactions = useMemo(() => {
+        if (filterType === 'all') {
+            return transactions;
+        }
+
+        if (filterType === 'month' && selectedMonth) {
+            return transactions.filter(t => {
+                const date = new Date(t.date);
+                const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+                return monthKey === selectedMonth;
+            });
+        }
+
+        if (filterType === 'custom' && dateFrom && dateTo) {
+            const from = new Date(dateFrom);
+            const to = new Date(dateTo);
+            to.setHours(23, 59, 59, 999); // Include entire end date
+
+            return transactions.filter(t => {
+                const date = new Date(t.date);
+                return date >= from && date <= to;
+            });
+        }
+
+        return transactions;
+    }, [transactions, filterType, selectedMonth, dateFrom, dateTo]);
+
+    // Reset filter
+    const resetFilter = () => {
+        setFilterType('all');
+        setSelectedMonth('');
+        setDateFrom('');
+        setDateTo('');
+    };
+
     // Calculate Summary Metrics
     const summary = useMemo(() => {
-        const totalIncome = transactions
+        const totalIncome = filteredTransactions
             .filter(t => t.type === "income")
             .reduce((sum, t) => sum + t.amount, 0);
 
-        const totalOutcome = transactions
+        const totalOutcome = filteredTransactions
             .filter(t => t.type === "outcome")
             .reduce((sum, t) => sum + t.amount, 0);
 
@@ -70,14 +125,14 @@ export default function FinancialReportPage() {
         const savingsRate = totalIncome > 0 ? (netSavings / totalIncome) * 100 : 0;
 
         return { totalIncome, totalOutcome, netSavings, savingsRate };
-    }, [transactions]);
+    }, [filteredTransactions]);
 
     // Data for Monthly Chart
     const monthlyData = useMemo(() => {
         const data: Record<string, { name: string; income: number; outcome: number }> = {};
         const locale = language === 'id' ? 'id-ID' : 'en-US';
 
-        transactions.forEach(t => {
+        filteredTransactions.forEach(t => {
             const date = new Date(t.date);
             const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
             const monthName = date.toLocaleDateString(locale, { month: 'short', year: 'numeric' });
@@ -94,14 +149,14 @@ export default function FinancialReportPage() {
         });
 
         return Object.values(data).sort((a, b) => new Date(a.name).getTime() - new Date(b.name).getTime());
-    }, [transactions, language]);
+    }, [filteredTransactions, language]);
 
     // Data for Category Pie Charts
     const categoryData = useMemo(() => {
         const incomeCats: Record<string, number> = {};
         const outcomeCats: Record<string, number> = {};
 
-        transactions.forEach(t => {
+        filteredTransactions.forEach(t => {
             if (t.type === "income") {
                 incomeCats[t.category] = (incomeCats[t.category] || 0) + t.amount;
             } else {
@@ -113,7 +168,7 @@ export default function FinancialReportPage() {
         const outcomeData = Object.entries(outcomeCats).map(([name, value]) => ({ name, value }));
 
         return { incomeData, outcomeData };
-    }, [transactions]);
+    }, [filteredTransactions]);
 
     const COLORS = ['#10b981', '#ef4444', '#f59e0b', '#3b82f6', '#8b5cf6', '#ec4899'];
 
@@ -126,9 +181,22 @@ export default function FinancialReportPage() {
         doc.setFontSize(10);
         doc.text(`${t.generated_on}${new Date().toLocaleDateString()}`, 14, 28);
 
+        // Add filter info
+        if (filterType !== 'all') {
+            let filterText = '';
+            if (filterType === 'month' && selectedMonth) {
+                const [year, month] = selectedMonth.split('-');
+                const date = new Date(parseInt(year), parseInt(month) - 1);
+                filterText = `Filter: ${date.toLocaleDateString(language === 'id' ? 'id-ID' : 'en-US', { month: 'long', year: 'numeric' })}`;
+            } else if (filterType === 'custom' && dateFrom && dateTo) {
+                filterText = `Filter: ${new Date(dateFrom).toLocaleDateString()} - ${new Date(dateTo).toLocaleDateString()}`;
+            }
+            doc.text(filterText, 14, 33);
+        }
+
         // Summary
         doc.setFontSize(14);
-        doc.text(t.summary, 14, 40);
+        doc.text(t.summary, 14, filterType !== 'all' ? 45 : 40);
 
         const summaryData = [
             [t.total_income, formatCurrency(summary.totalIncome)],
@@ -138,8 +206,8 @@ export default function FinancialReportPage() {
         ];
 
         autoTable(doc, {
-            startY: 45,
-            head: [["Metrik", "Nilai"]], // Could translate "Metric" and "Value" too but not critical. Let's keep existing or use defaults.
+            startY: filterType !== 'all' ? 50 : 45,
+            head: [["Metrik", "Nilai"]],
             body: summaryData,
             theme: 'grid',
             headStyles: { fillColor: [249, 115, 22] }
@@ -148,7 +216,7 @@ export default function FinancialReportPage() {
         // Transactions Table
         doc.text(t.transaction_history, 14, (doc as any).lastAutoTable.finalY + 15);
 
-        const tableData = transactions
+        const tableData = filteredTransactions
             .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
             .map(tItem => [
                 new Date(tItem.date).toLocaleDateString(),
@@ -188,6 +256,115 @@ export default function FinancialReportPage() {
                         {t.download_pdf}
                     </Button>
                 </div>
+
+                {/* Filter Section */}
+                <Card padding="md" variant="glass">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                        <div className="flex items-center gap-2">
+                            <Calendar className="w-5 h-5 text-primary-500" />
+                            <span className="font-medium text-surface-900 dark:text-white">
+                                {language === 'id' ? 'Filter Periode:' : 'Filter Period:'}
+                            </span>
+                        </div>
+
+                        <div className="flex flex-wrap items-center gap-2 flex-1">
+                            {/* All Time Button */}
+                            <Button
+                                size="sm"
+                                variant={filterType === 'all' ? 'fire' : 'ghost'}
+                                onClick={() => setFilterType('all')}
+                            >
+                                {language === 'id' ? 'Semua' : 'All Time'}
+                            </Button>
+
+                            {/* Month Filter Button */}
+                            <Button
+                                size="sm"
+                                variant={filterType === 'month' ? 'fire' : 'ghost'}
+                                onClick={() => setFilterType('month')}
+                            >
+                                {language === 'id' ? 'Per Bulan' : 'By Month'}
+                            </Button>
+
+                            {/* Custom Range Button */}
+                            <Button
+                                size="sm"
+                                variant={filterType === 'custom' ? 'fire' : 'ghost'}
+                                onClick={() => setFilterType('custom')}
+                            >
+                                {language === 'id' ? 'Kustom' : 'Custom Range'}
+                            </Button>
+
+                            {/* Month Dropdown - shown when filterType is 'month' */}
+                            {filterType === 'month' && (
+                                <select
+                                    value={selectedMonth}
+                                    onChange={(e) => setSelectedMonth(e.target.value)}
+                                    className="input text-sm py-1.5"
+                                >
+                                    <option value="">
+                                        {language === 'id' ? 'Pilih Bulan' : 'Select Month'}
+                                    </option>
+                                    {monthOptions.map(month => {
+                                        const [year, monthNum] = month.split('-');
+                                        const date = new Date(parseInt(year), parseInt(monthNum) - 1);
+                                        const label = date.toLocaleDateString(
+                                            language === 'id' ? 'id-ID' : 'en-US',
+                                            { month: 'long', year: 'numeric' }
+                                        );
+                                        return (
+                                            <option key={month} value={month}>
+                                                {label}
+                                            </option>
+                                        );
+                                    })}
+                                </select>
+                            )}
+
+                            {/* Custom Date Inputs - shown when filterType is 'custom' */}
+                            {filterType === 'custom' && (
+                                <>
+                                    <div className="flex items-center gap-2">
+                                        <input
+                                            type="date"
+                                            value={dateFrom}
+                                            onChange={(e) => setDateFrom(e.target.value)}
+                                            className="input text-sm py-1.5"
+                                            placeholder={language === 'id' ? 'Dari' : 'From'}
+                                        />
+                                        <span className="text-surface-500">-</span>
+                                        <input
+                                            type="date"
+                                            value={dateTo}
+                                            onChange={(e) => setDateTo(e.target.value)}
+                                            className="input text-sm py-1.5"
+                                            placeholder={language === 'id' ? 'Sampai' : 'To'}
+                                        />
+                                    </div>
+                                </>
+                            )}
+
+                            {/* Reset Button - shown when filter is active */}
+                            {filterType !== 'all' && (
+                                <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    onClick={resetFilter}
+                                    icon={<X className="w-4 h-4" />}
+                                >
+                                    {language === 'id' ? 'Reset' : 'Reset'}
+                                </Button>
+                            )}
+                        </div>
+
+                        {/* Filter Count */}
+                        {filterType !== 'all' && (
+                            <div className="text-sm text-surface-500 dark:text-surface-400">
+                                {filteredTransactions.length} {language === 'id' ? 'transaksi' : 'transactions'}
+                            </div>
+                        )}
+                    </div>
+                </Card>
 
                 {/* Summary Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -333,7 +510,7 @@ export default function FinancialReportPage() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {transactions.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).map((tItem) => (
+                                {filteredTransactions.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).map((tItem) => (
                                     <tr key={tItem._id} className="border-b border-surface-100 dark:border-surface-800 hover:bg-surface-50 dark:hover:bg-surface-900/50">
                                         <td className="py-3 px-4">{new Date(tItem.date).toLocaleDateString()}</td>
                                         <td className="py-3 px-4">
@@ -351,7 +528,7 @@ export default function FinancialReportPage() {
                                         </td>
                                     </tr>
                                 ))}
-                                {transactions.length === 0 && (
+                                {filteredTransactions.length === 0 && (
                                     <tr>
                                         <td colSpan={4} className="py-8 text-center text-surface-500">
                                             {t.no_transactions}
